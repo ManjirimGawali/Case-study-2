@@ -1,0 +1,602 @@
+{
+  "employees": [
+    {
+      "emp": {
+        "rowNo": "p1#1",
+        "name": "ANIL KUMAR",
+        "uan": "999912340001",
+        "ip": "9912340001",
+        "agency": "Sample Staffing Pvt. Ltd.",
+        "state": "Bihar",
+        "pfAmount": 1622,
+        "esicAmount": 102
+      },
+      "pf": {
+        "kind": "PF",
+        "id": "999912340001",
+        "deducted": 1622,
+        "deposited": 1622,
+        "difference": 0,
+        "ecrName": "ANIL KUMAR",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 1622,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      },
+      "esic": {
+        "kind": "ESIC",
+        "id": "9912340001",
+        "deducted": 102,
+        "deposited": 102,
+        "difference": 0,
+        "ecrName": "ANIL KUMAR",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 102,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      }
+    },
+    {
+      "emp": {
+        "rowNo": "p1#2",
+        "name": "SUNITA DEVI",
+        "uan": "999912340002",
+        "ip": "9912340002",
+        "agency": "Sample Staffing Pvt. Ltd.",
+        "state": "Bihar",
+        "pfAmount": 1498,
+        "esicAmount": 94
+      },
+      "pf": {
+        "kind": "PF",
+        "id": "999912340002",
+        "deducted": 1498,
+        "deposited": 1498,
+        "difference": 0,
+        "ecrName": "SUNITA DEVI",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 1498,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      },
+      "esic": {
+        "kind": "ESIC",
+        "id": "9912340002",
+        "deducted": 94,
+        "deposited": 94,
+        "difference": 0,
+        "ecrName": "SUNITA DEVI",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 94,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      }
+    },
+    {
+      "emp": {
+        "rowNo": "p1#3",
+        "name": "RAKESH VERMA",
+        "uan": "999912340003",
+        "ip": "9912340003",
+        "agency": "Sample Staffing Pvt. Ltd.",
+        "state": "Bihar",
+        "pfAmount": 1747,
+        "esicAmount": 110
+      },
+      "pf": {
+        "kind": "PF",
+        "id": "999912340003",
+        "deducted": 1747,
+        "deposited": 1747,
+        "difference": 0,
+        "ecrName": "RAKESH VERMA",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 1747,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      },
+      "esic": {
+        "kind": "ESIC",
+        "id": "9912340003",
+        "deducted": 110,
+        "deposited": 110,
+        "difference": 0,
+        "ecrName": "RAKESH VERMA",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 110,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      }
+    },
+    {
+      "emp": {
+        "rowNo": "p1#4",
+        "name": "PRIYA SINGH",
+        "uan": "999912340004",
+        "ip": "9912340004",
+        "agency": "Sample Staffing Pvt. Ltd.",
+        "state": "Bihar",
+        "pfAmount": 1420,
+        "esicAmount": 89
+      },
+      "pf": {
+        "kind": "PF",
+        "id": "999912340004",
+        "deducted": 1420,
+        "deposited": 1420,
+        "difference": 0,
+        "ecrName": "PRIYA SINGH",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 1420,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      },
+      "esic": {
+        "kind": "ESIC",
+        "id": "9912340004",
+        "deducted": 89,
+        "deposited": 89,
+        "difference": 0,
+        "ecrName": "PRIYA SINGH",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 89,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      }
+    },
+    {
+      "emp": {
+        "rowNo": "p1#5",
+        "name": "MANOJ YADAV",
+        "uan": "999912340005",
+        "ip": "9912340005",
+        "agency": "Sample Staffing Pvt. Ltd.",
+        "state": "Bihar",
+        "pfAmount": 1560,
+        "esicAmount": 98
+      },
+      "pf": {
+        "kind": "PF",
+        "id": "999912340005",
+        "deducted": 1560,
+        "deposited": 1560,
+        "difference": 0,
+        "ecrName": "MANOJ YADAV",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 1560,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      },
+      "esic": {
+        "kind": "ESIC",
+        "id": "9912340005",
+        "deducted": 98,
+        "deposited": 98,
+        "difference": 0,
+        "ecrName": "MANOJ YADAV",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 98,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      }
+    },
+    {
+      "emp": {
+        "rowNo": "p1#6",
+        "name": "KAVITA KUMARI",
+        "uan": "999912340006",
+        "ip": "9912340006",
+        "agency": "Sample Staffing Pvt. Ltd.",
+        "state": "Bihar",
+        "pfAmount": 1170,
+        "esicAmount": 74
+      },
+      "pf": {
+        "kind": "PF",
+        "id": "999912340006",
+        "deducted": 1170,
+        "deposited": 1170,
+        "difference": 0,
+        "ecrName": "KAVITA KUMARI",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 1170,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      },
+      "esic": {
+        "kind": "ESIC",
+        "id": "9912340006",
+        "deducted": 74,
+        "deposited": 74,
+        "difference": 0,
+        "ecrName": "KAVITA KUMARI",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 74,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      }
+    },
+    {
+      "emp": {
+        "rowNo": "p1#7",
+        "name": "DINESH PRASAD",
+        "uan": "999912340007",
+        "ip": "9912340007",
+        "agency": "Sample Staffing Pvt. Ltd.",
+        "state": "Bihar",
+        "pfAmount": 1529,
+        "esicAmount": 96
+      },
+      "pf": {
+        "kind": "PF",
+        "id": "999912340007",
+        "deducted": 1529,
+        "deposited": 1529,
+        "difference": 0,
+        "ecrName": "DEVENDRA PRASAD",
+        "nameMatch": "MISMATCH",
+        "nameDetail": "DINESH ≠ DEVENDRA",
+        "expected": 1529,
+        "notes": [],
+        "page": 1,
+        "status": "NAME_MISMATCH",
+        "reason": "UAN found but name differs: wagesheet \"DINESH PRASAD\" vs ECR \"DEVENDRA PRASAD\" (DINESH ≠ DEVENDRA)"
+      },
+      "esic": {
+        "kind": "ESIC",
+        "id": "9912340007",
+        "deducted": 96,
+        "deposited": 96,
+        "difference": 0,
+        "ecrName": "DINESH PRASAD",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 96,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      }
+    },
+    {
+      "emp": {
+        "rowNo": "p1#8",
+        "name": "REKHA SHARMA",
+        "uan": "999912340008",
+        "ip": "9912340008",
+        "agency": "Sample Staffing Pvt. Ltd.",
+        "state": "Bihar",
+        "pfAmount": 1591,
+        "esicAmount": 100
+      },
+      "pf": {
+        "kind": "PF",
+        "id": "999912340008",
+        "deducted": 1591,
+        "deposited": 1591,
+        "difference": 0,
+        "ecrName": "REKHA SHARMA",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 1591,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      },
+      "esic": {
+        "kind": "ESIC",
+        "id": "9912340008",
+        "deducted": 100,
+        "deposited": 100,
+        "difference": 0,
+        "ecrName": "RENU SHARMA",
+        "nameMatch": "MISMATCH",
+        "nameDetail": "REKHA ≠ RENU",
+        "expected": 100,
+        "notes": [],
+        "page": 1,
+        "status": "NAME_MISMATCH",
+        "reason": "IP Number found but name differs: wagesheet \"REKHA SHARMA\" vs ECR \"RENU SHARMA\" (REKHA ≠ RENU)"
+      }
+    },
+    {
+      "emp": {
+        "rowNo": "p1#9",
+        "name": "SANJAY PASWAN",
+        "uan": "999912340009",
+        "ip": "9912340009",
+        "agency": "Sample Staffing Pvt. Ltd.",
+        "state": "Bihar",
+        "pfAmount": 1310,
+        "esicAmount": 82
+      },
+      "pf": {
+        "kind": "PF",
+        "id": "999912340009",
+        "deducted": 1310,
+        "deposited": null,
+        "difference": null,
+        "ecrName": "",
+        "nameMatch": "",
+        "nameDetail": "",
+        "expected": null,
+        "notes": [],
+        "status": "MISSING",
+        "reason": "UAN 999912340009 not found in PF ECR — ₹1,310 deducted but not deposited"
+      },
+      "esic": {
+        "kind": "ESIC",
+        "id": "9912340009",
+        "deducted": 82,
+        "deposited": null,
+        "difference": null,
+        "ecrName": "",
+        "nameMatch": "",
+        "nameDetail": "",
+        "expected": null,
+        "notes": [],
+        "status": "MISSING",
+        "reason": "IP Number 9912340009 not found in ESIC ECR — ₹82 deducted but not deposited"
+      }
+    },
+    {
+      "emp": {
+        "rowNo": "p1#10",
+        "name": "POOJA GUPTA",
+        "uan": "999912340010",
+        "ip": "9912340010",
+        "agency": "Sample Staffing Pvt. Ltd.",
+        "state": "Bihar",
+        "pfAmount": 1466,
+        "esicAmount": 92
+      },
+      "pf": {
+        "kind": "PF",
+        "id": "999912340010",
+        "deducted": 1466,
+        "deposited": 1466,
+        "difference": 0,
+        "ecrName": "POOJA GUPTA",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 1466,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      },
+      "esic": {
+        "kind": "ESIC",
+        "id": "9912340010",
+        "deducted": 92,
+        "deposited": null,
+        "difference": null,
+        "ecrName": "",
+        "nameMatch": "",
+        "nameDetail": "",
+        "expected": null,
+        "notes": [],
+        "status": "MISSING",
+        "reason": "IP Number 9912340010 not found in ESIC ECR — ₹92 deducted but not deposited"
+      }
+    },
+    {
+      "emp": {
+        "rowNo": "p1#11",
+        "name": "VIKRAM THAKUR",
+        "uan": "999912340011",
+        "ip": "9912340011",
+        "agency": "Sample Staffing Pvt. Ltd.",
+        "state": "Bihar",
+        "pfAmount": 1654,
+        "esicAmount": 104
+      },
+      "pf": {
+        "kind": "PF",
+        "id": "999912340011",
+        "deducted": 1654,
+        "deposited": 1354,
+        "difference": -300,
+        "ecrName": "VIKRAM THAKUR",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 1654,
+        "notes": [],
+        "page": 1,
+        "status": "AMOUNT_MISMATCH",
+        "reason": "Deposited ₹1,354 (EE share) vs deducted ₹1,654 — short by ₹300. 12% of ECR EPF wages = ₹1,654 (matches the wagesheet)"
+      },
+      "esic": {
+        "kind": "ESIC",
+        "id": "9912340011",
+        "deducted": 104,
+        "deposited": 104,
+        "difference": 0,
+        "ecrName": "VIKRAM THAKUR",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 104,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      }
+    },
+    {
+      "emp": {
+        "rowNo": "p1#12",
+        "name": "NEHA MISHRA",
+        "uan": "999912340012",
+        "ip": "9912340012",
+        "agency": "Sample Staffing Pvt. Ltd.",
+        "state": "Bihar",
+        "pfAmount": 1373,
+        "esicAmount": 86
+      },
+      "pf": {
+        "kind": "PF",
+        "id": "999912340012",
+        "deducted": 1373,
+        "deposited": 1373,
+        "difference": 0,
+        "ecrName": "NEHA MISHRA",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 1373,
+        "notes": [],
+        "page": 1,
+        "status": "MATCHED",
+        "reason": "Matched"
+      },
+      "esic": {
+        "kind": "ESIC",
+        "id": "9912340012",
+        "deducted": 86,
+        "deposited": 66,
+        "difference": -20,
+        "ecrName": "NEHA MISHRA",
+        "nameMatch": "EXACT",
+        "nameDetail": "",
+        "expected": 86,
+        "notes": [],
+        "page": 1,
+        "status": "AMOUNT_MISMATCH",
+        "reason": "Deposited ₹66 (IP contribution) vs deducted ₹86 — short by ₹20. 0.75% of ECR wages = ₹86 (matches the wagesheet)"
+      }
+    }
+  ],
+  "summary": {
+    "PF": {
+      "counts": {
+        "MATCHED": 9,
+        "NAME_MISMATCH": 1,
+        "AMOUNT_MISMATCH": 1,
+        "MISSING": 1,
+        "NOT_APPLICABLE": 0
+      },
+      "total": 12,
+      "deducted": 17940,
+      "deposited": 16330,
+      "shortfall": 1610
+    },
+    "ESIC": {
+      "counts": {
+        "MATCHED": 8,
+        "NAME_MISMATCH": 1,
+        "AMOUNT_MISMATCH": 1,
+        "MISSING": 2,
+        "NOT_APPLICABLE": 0
+      },
+      "total": 12,
+      "deducted": 1127,
+      "deposited": 933,
+      "shortfall": 194
+    }
+  },
+  "reconciliation": {
+    "checks": [
+      {
+        "doc": "PF ECR",
+        "check": "Member rows vs \"Total Members\"",
+        "printed": 11,
+        "parsed": 11,
+        "ok": true
+      },
+      {
+        "doc": "PF ECR",
+        "check": "Σ EE share vs \"Total EPF Contribution\"",
+        "printed": 16330,
+        "parsed": 16330,
+        "ok": true
+      },
+      {
+        "doc": "PF ECR",
+        "check": "Σ EPS vs \"Total EPS Contribution\"",
+        "printed": 11544,
+        "parsed": 11544,
+        "ok": true
+      },
+      {
+        "doc": "PF ECR",
+        "check": "Σ ER vs \"Total EPF-EPS Contribution\"",
+        "printed": 4786,
+        "parsed": 4786,
+        "ok": true
+      },
+      {
+        "doc": "ESIC ECR",
+        "check": "Σ IP contribution vs \"Total IP Contribution\"",
+        "printed": 933,
+        "parsed": 933,
+        "ok": true
+      },
+      {
+        "doc": "ESIC ECR",
+        "check": "Σ wages vs \"Total Monthly Wages\"",
+        "printed": 126360,
+        "parsed": 126360,
+        "ok": true
+      }
+    ],
+    "ok": true,
+    "failed": 0
+  },
+  "extras": [],
+  "dataIssues": [],
+  "meta": {
+    "wageMonth": {
+      "PF": "AUG2025",
+      "ESIC": "AUG2025"
+    },
+    "files": {
+      "wagesheet": "Sample_Wagesheet_Aug25.xlsx - Sheet1.pdf",
+      "pf": "PF ECR AUG-25 SAMPLE.pdf",
+      "esic": "ESIC ECR AUG-25 SAMPLE.pdf"
+    },
+    "counts": {
+      "wagesheet": 12,
+      "pf": 11,
+      "esic": 10,
+      "pfPages": 1,
+      "esicPages": 1
+    },
+    "ms": 83
+  }
+}

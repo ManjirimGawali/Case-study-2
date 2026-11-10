@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ECR Verifier Explained</title>
+<style>
+  :root { --bg:#fff; --fg:#0a0a0a; --muted:#555b66; --line:#d9dee7; --soft:#f4f7fc; --blue:#1d4ed8; --blue-soft:#e8efff; --blue-dark:#1e3a8a; --code-bg:#0b1220; --code-fg:#e6edf7; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif; }
+  header { background:var(--fg); color:#fff; padding:44px 16px 34px; border-bottom:4px solid var(--blue); }
+  header .wrap { max-width:1100px; margin:0 auto; }
+  header h1 { margin:0 0 8px; font-size:32px; letter-spacing:-.02em; }
+  header p { margin:0; color:#c9d3e6; max-width:820px; font-size:17px; }
+  .tag { display:inline-block; background:var(--blue); color:#fff; font-size:12px; font-weight:600; padding:2px 10px; border-radius:999px; margin-bottom:12px; letter-spacing:.04em; text-transform:uppercase; }
+  .layout { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:230px 1fr; gap:40px; padding:32px 16px 80px; }
+  nav { position:sticky; top:20px; align-self:start; font-size:14px; max-height:calc(100vh - 40px); overflow-y:auto; }
+  nav b { display:block; font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:8px; }
+  nav a { display:block; color:var(--fg); text-decoration:none; padding:4px 0 4px 10px; border-left:2px solid var(--line); }
+  nav a:hover { color:var(--blue); border-left-color:var(--blue); }
+  main { min-width:0; }
+  section { margin-bottom:58px; }
+  h2 { font-size:25px; margin:0 0 6px; letter-spacing:-.01em; }
+  h2 .num { color:var(--blue); margin-right:8px; }
+  h3 { font-size:18px; margin:24px 0 8px; }
+  .lead { color:var(--muted); margin:0 0 18px; font-size:17px; }
+  p { margin:0 0 12px; }
+  code { font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:.87em; background:var(--blue-soft); color:var(--blue-dark); padding:1px 5px; border-radius:4px; }
+  pre { background:var(--code-bg); color:var(--code-fg); padding:16px 18px; border-radius:8px; overflow-x:auto; font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; margin:0 0 16px; }
+  pre code { background:none; color:inherit; padding:0; font-size:inherit; }
+  pre .c { color:#7f93b5; }
+  table { width:100%; border-collapse:collapse; margin:0 0 16px; font-size:14.5px; }
+  th { background:var(--fg); color:#fff; text-align:left; padding:9px 12px; font-weight:600; }
+  td { border-bottom:1px solid var(--line); padding:8px 12px; vertical-align:top; }
+  tr:nth-child(even) td { background:var(--soft); }
+  .table-wrap { overflow-x:auto; }
+  .callout { border-left:4px solid var(--blue); background:var(--blue-soft); padding:12px 16px; border-radius:0 8px 8px 0; margin:0 0 16px; }
+  .callout.dark { background:var(--fg); color:#fff; }
+  .callout.dark code { background:#1f2937; color:#c7d7ff; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin-bottom:16px; }
+  .card { border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
+  .card h4 { margin:0 0 6px; font-size:15px; color:var(--blue); }
+  .card p { margin:0; font-size:14px; color:var(--muted); }
+  .diagram { border:1px solid var(--line); border-radius:10px; padding:14px; margin:0 0 16px; overflow-x:auto; }
+  .diagram svg { display:block; width:100%; min-width:680px; height:auto; }
+  .caption { font-size:13px; color:var(--muted); margin:-8px 0 16px; }
+  .st { display:inline-block; font:600 12px ui-monospace,Menlo,monospace; padding:2px 8px; border-radius:4px; background:var(--fg); color:#fff; white-space:nowrap; }
+  .st.ok { background:var(--blue); }
+  .steps { counter-reset:s; list-style:none; padding:0; margin:0 0 16px; }
+  .steps li { counter-increment:s; position:relative; padding:10px 14px 10px 50px; border:1px solid var(--line); border-radius:8px; margin-bottom:8px; }
+  .steps li::before { content:counter(s); position:absolute; left:12px; top:10px; width:26px; height:26px; border-radius:50%; background:var(--fg); color:#fff; font-size:13px; font-weight:700; display:grid; place-items:center; }
+  .trace { border:1px solid var(--line); border-radius:10px; margin-bottom:14px; overflow:hidden; }
+  .trace-head { background:var(--fg); color:#fff; padding:10px 16px; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; }
+  .trace-head span { color:#9db8ff; font-size:14px; }
+  .trace-body { padding:12px 16px 4px; }
+  .trace-body ol { margin:0 0 12px; padding-left:20px; }
+  details { border:1px solid var(--line); border-radius:8px; margin-bottom:8px; }
+  details summary { cursor:pointer; padding:10px 36px 10px 14px; font-weight:600; list-style:none; position:relative; }
+  details summary::-webkit-details-marker { display:none; }
+  details summary::after { content:"+"; position:absolute; right:14px; top:8px; color:var(--blue); font-size:20px; font-weight:700; }
+  details[open] summary::after { content:"–"; }
+  details[open] summary { border-bottom:1px solid var(--line); }
+  details .ans { padding:10px 14px 4px; }
+  .lvl { display:inline-block; font-size:11px; font-weight:700; padding:1px 7px; border-radius:4px; margin-right:8px; vertical-align:2px; }
+  .lvl.b { background:var(--blue-soft); color:var(--blue-dark); } .lvl.i { background:#dbeafe; color:#1e40af; } .lvl.a { background:var(--fg); color:#fff; }
+  ul.check { list-style:none; padding:0; }
+  ul.check li { padding:7px 0 7px 30px; position:relative; border-bottom:1px solid var(--line); }
+  ul.check li::before { content:""; position:absolute; left:4px; top:12px; width:14px; height:14px; border:2px solid var(--blue); border-radius:3px; }
+  footer { border-top:1px solid var(--line); padding:20px 16px; text-align:center; color:var(--muted); font-size:13px; }
+  .box { fill:#fff; stroke:var(--fg); stroke-width:1.5; } .box.blue { fill:var(--blue-soft); stroke:var(--blue); } .box.dark { fill:var(--fg); stroke:var(--fg); } .box.dash { fill:#fff; stroke:var(--blue); stroke-dasharray:5 4; }
+  .t { font:600 14px -apple-system,Segoe UI,Helvetica,Arial,sans-serif; fill:var(--fg); } .t.w { fill:#fff; }
+  .s { font:12px -apple-system,Segoe UI,Helvetica,Arial,sans-serif; fill:var(--muted); } .s.w { fill:#c9d3e6; }
+  .lbl { font:11.5px -apple-system,Segoe UI,Helvetica,Arial,sans-serif; fill:var(--blue-dark); }
+  .arrow { stroke:var(--blue); stroke-width:1.8; fill:none; }
+  .mono { font:12px ui-monospace,Menlo,monospace; fill:var(--fg); }
+  @media (max-width:820px) { .layout { grid-template-columns:1fr; gap:0; } nav { display:none; } header h1 { font-size:25px; } }
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <span class="tag">Case Study 2 · Explainer &amp; study guide</span>
+  <h1>ECR Verifier: how it works and why</h1>
+  <p>How the system proves, employee by employee, that the PF and ESIC deducted from contract workers' pay actually reached EPFO and ESIC. It covers the problem, the documents, the architecture, the name-matching tolerance, worked examples from the real sample, practice exercises and review questions.</p>
+</div></header>
+
+<div class="layout">
+<nav>
+  <b>Contents</b>
+  <a href="#purpose">1. Purpose &amp; problem</a>
+  <a href="#docs">2. The three documents</a>
+  <a href="#idea">3. Core idea</a>
+  <a href="#arch">4. Architecture</a>
+  <a href="#parse">5. Reading the PDFs</a>
+  <a href="#recon">6. Reconciliation</a>
+  <a href="#names">7. Name tolerance</a>
+  <a href="#amounts">8. Amounts</a>
+  <a href="#verdicts">9. Verdict gates</a>
+  <a href="#examples">10. Worked examples</a>
+  <a href="#testing">11. How it was tested</a>
+  <a href="#limits">12. Trade-offs &amp; limits</a>
+  <a href="#practice">13. What to practise</a>
+  <a href="#questions">14. Review questions</a>
+  <a href="#glossary">15. Glossary</a>
+  <a href="#cheat">16. Cheat sheet</a>
+</nav>
+<main>
+
+<section id="purpose">
+  <h2><span class="num">1</span>Purpose &amp; the problem it solves</h2>
+  <p class="lead">Vendor agencies supply contract staff and deduct statutory contributions from their wages: PF (12%) and ESIC (0.75%). The company must confirm those deductions were really deposited with the authorities. If they weren't, workers lose benefits and the principal employer carries the liability.</p>
+  <div class="grid">
+    <div class="card"><h4>Today</h4><p>A compliance person matches hundreds of rows across a wagesheet and two government PDFs by hand, every month, for every vendor.</p></div>
+    <div class="card"><h4>The question per employee</h4><p>Is the <b>right identifier</b> in the ECR, is it the <b>right person</b>, and was the <b>right amount</b> deposited? Separately for PF and ESIC.</p></div>
+    <div class="card"><h4>The hard part</h4><p>Names vary (spelling, word order, honorifics), but some "small" differences are genuinely different people. Catch real mismatches without crying wolf.</p></div>
+  </div>
+</section>
+
+<section id="docs">
+  <h2><span class="num">2</span>The three documents</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Document</th><th>Key</th><th>What we use</th><th>Gotchas</th></tr>
+    <tr><td><b>Wagesheet</b> (vendor; Excel, here a PDF export)</td><td>Name, UAN, IP Number</td><td>PF @ 12% and ESIC @ 0.75% = what was <i>deducted</i></td><td>IDs stored as numbers; header row not on row 1; total rows</td></tr>
+    <tr><td><b>PF ECR</b> (EPFO Electronic Challan cum Return)</td><td>UAN (12 digits)</td><td><b>EE share</b> = employee PF <i>deposited</i>; EPF wages</td><td>Two adjacent name columns; two-line headers; right-aligned numbers; totals in the header</td></tr>
+    <tr><td><b>ESIC ECR</b> (contribution history)</td><td>IP Number (10 digits)</td><td><b>IP contribution</b> = employee ESIC <i>deposited</i>; wages</td><td>Totals printed <i>below</i> labels; continuation pages may have no header</td></tr>
+  </table></div>
+  <p>Raw PF ECR text shows why plain text parsing fails. The two name columns run together:</p>
+<pre><code>1 999912340001 ANIL KUMAR ANIL KUMAR 13,520 13,520 13,520 13,520 1,622 1,126 496 0
+<span class="c">#   UAN          ECR name   UAN-repo name  gross  EPF   EPS   EDLI   EE    EPS  ER  NCP</span></code></pre>
+</section>
+
+<section id="idea">
+  <h2><span class="num">3</span>The core idea</h2>
+  <ol class="steps">
+    <li><b>Read the PDFs by position, guided by their headers</b>, never by fixed coordinates, so any page count and layout shift works.</li>
+    <li><b>Prove the read:</b> parsed rows must add up to the totals the ECR itself prints. If they don't, the report says so in red.</li>
+    <li><b>Identify by ID, confirm by name:</b> UAN / IP Number decides <i>who</i>; the name only confirms it's the same person.</li>
+    <li><b>Explain every verdict</b> in plain words, with the evidence (both names, both amounts, the statutory expectation).</li>
+  </ol>
+  <div class="callout dark">No AI in the verdict path. Compliance answers must be <b>reproducible and auditable</b>: the same files always give the same report. A local LLM is available only as an optional, labelled second-opinion note on borderline names.</div>
+</section>
+
+<section id="arch">
+  <h2><span class="num">4</span>Architecture</h2>
+  <div class="diagram">
+    <svg viewBox="0 0 960 360" role="img" aria-label="Architecture">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1d4ed8"/></marker></defs>
+      <rect class="box" x="20" y="30" width="170" height="70" rx="8"/><text class="t" x="105" y="60" text-anchor="middle">React UI</text><text class="s" x="105" y="80" text-anchor="middle">3 files · results · xlsx</text>
+      <rect class="box dash" x="20" y="130" width="170" height="70" rx="8"/><text class="t" x="105" y="160" text-anchor="middle">CLI</text><text class="s" x="105" y="180" text-anchor="middle">npm run verify</text>
+      <rect class="box dark" x="240" y="30" width="180" height="70" rx="8"/><text class="t w" x="330" y="60" text-anchor="middle">Express API</text><text class="s w" x="330" y="80" text-anchor="middle">/api/runs</text>
+      <rect class="box" x="240" y="260" width="180" height="70" rx="8"/><text class="t" x="330" y="290" text-anchor="middle">Store</text><text class="s" x="330" y="310" text-anchor="middle">data/runs or MongoDB</text>
+      <rect class="box blue" x="470" y="20" width="220" height="140" rx="10"/><text class="t" x="580" y="45" text-anchor="middle">ingest/</text>
+      <text class="s" x="488" y="70">pdfText: words + x/y</text><text class="s" x="488" y="90">table: header-driven columns</text><text class="s" x="488" y="110">ecr: PF · ESIC + printed totals</text><text class="s" x="488" y="130">wagesheet: xlsx · csv · pdf</text><text class="s" x="488" y="150">detect: right file, right slot</text>
+      <rect class="box blue" x="470" y="190" width="220" height="140" rx="10"/><text class="t" x="580" y="215" text-anchor="middle">verify/</text>
+      <text class="s" x="488" y="240">reconcile: rows vs totals</text><text class="s" x="488" y="260">ids: digit strings</text><text class="s" x="488" y="280">names: rules + guard</text><text class="s" x="488" y="300">amounts: ±₹1 + expected</text><text class="s" x="488" y="320">verdict: gates → reason</text>
+      <rect class="box dark" x="740" y="110" width="200" height="80" rx="8"/><text class="t w" x="840" y="140" text-anchor="middle">report/workbook</text><text class="s w" x="840" y="160" text-anchor="middle">6 sheets · colours</text><text class="s w" x="840" y="176" text-anchor="middle">+ CSV</text>
+      <rect class="box dash" x="740" y="240" width="200" height="70" rx="8"/><text class="t" x="840" y="270" text-anchor="middle">Ollama (optional)</text><text class="s" x="840" y="290" text-anchor="middle">advisory name note</text>
+      <line class="arrow" x1="190" y1="65" x2="238" y2="65" marker-end="url(#ah)" marker-start="url(#ah)"/>
+      <line class="arrow" x1="420" y1="65" x2="468" y2="65" marker-end="url(#ah)"/>
+      <path class="arrow" d="M190,165 H440 V90 H468" marker-end="url(#ah)"/>
+      <line class="arrow" x1="580" y1="160" x2="580" y2="188" marker-end="url(#ah)"/>
+      <path class="arrow" d="M690,250 L738,170" marker-end="url(#ah)"/>
+      <line class="arrow" x1="690" y1="290" x2="738" y2="280" marker-end="url(#ah)" stroke-dasharray="5 4"/>
+      <path class="arrow" d="M330,100 V258" marker-end="url(#ah)"/>
+      <text class="lbl" x="338" y="180">save run</text>
+    </svg>
+  </div>
+  <p class="caption">One entry point (<code>run.js → runVerification</code>) is shared by the UI, the CLI, the tests and the evaluator.</p>
+</section>
+
+<section id="parse">
+  <h2><span class="num">5</span>Reading the PDFs (no hard-coding)</h2>
+  <div class="diagram">
+    <svg viewBox="0 0 960 200" role="img" aria-label="Column assignment">
+      <text class="s" x="10" y="20">header line (anchors found by keywords; fragments above/below merged)</text>
+      <rect class="box blue" x="40" y="30" width="60" height="26"/><text class="mono" x="50" y="48">UAN</text>
+      <rect class="box blue" x="160" y="30" width="140" height="26"/><text class="mono" x="168" y="48">Name as per ECR</text>
+      <rect class="box blue" x="330" y="30" width="200" height="26"/><text class="mono" x="338" y="48">Name as per UAN Repository</text>
+      <rect class="box blue" x="700" y="30" width="34" height="26"/><text class="mono" x="708" y="48">EE</text>
+      <rect class="box blue" x="790" y="30" width="44" height="26"/><text class="mono" x="798" y="48">EPS</text>
+      <rect class="box blue" x="880" y="30" width="34" height="26"/><text class="mono" x="888" y="48">ER</text>
+      <text class="s" x="10" y="98">data line (only if the UAN cell is 12 digits)</text>
+      <text class="mono" x="20" y="125">999912340001</text>
+      <text class="mono" x="160" y="125">ANIL KUMAR</text>
+      <text class="mono" x="330" y="125">ANIL KUMAR</text>
+      <text class="mono" x="712" y="125">1,622</text>
+      <text class="mono" x="808" y="125">1,126</text>
+      <text class="mono" x="918" y="125">496</text>
+      <path class="arrow" d="M935,112 L900,60" marker-end="url(#ah)"/>
+      <text class="lbl" x="560" y="170">"496" overlaps no header → numeric → right-aligned → last header starting before its right edge = ER</text>
+    </svg>
+  </div>
+  <ol>
+    <li><b>Positioned words</b> per page (<code>pdfjs-dist</code>), grouped into lines.</li>
+    <li><b>Header line</b> found by anchor keywords. Fragments 16 pt above or below are merged: <code>Name as per</code> + <code>UAN Repository</code>.</li>
+    <li><b>Cell → column:</b> biggest header overlap; else, for numbers, right-edge rule (right-aligned); else, nearest header centre.</li>
+    <li><b>Data row only if the ID cell has the ID shape</b>, so repeated headers, footers and totals are skipped for free.</li>
+    <li><b>Continuation pages</b> reuse the last header's columns; <b>wrapped names</b> are re-joined.</li>
+  </ol>
+</section>
+
+<section id="recon">
+  <h2><span class="num">6</span>Reconciliation: the parse proves itself</h2>
+  <p>Each ECR prints its own totals. After parsing, the system recomputes them from the rows:</p>
+  <div class="table-wrap"><table>
+    <tr><th>Printed on the ECR</th><th>Recomputed from parsed rows</th><th>Sample</th></tr>
+    <tr><td>Total Members 11</td><td>number of PF rows</td><td>11 ✔</td></tr>
+    <tr><td>Total EPF Contribution 16,330</td><td>Σ EE share</td><td>16,330 ✔</td></tr>
+    <tr><td>Total EPS 11,544 · Total EPF-EPS 4,786</td><td>Σ EPS · Σ ER</td><td>✔ ✔</td></tr>
+    <tr><td>Total IP Contribution 933.00</td><td>Σ IP contribution</td><td>933 ✔</td></tr>
+    <tr><td>Total Monthly Wages 126,360</td><td>Σ wages</td><td>126,360 ✔</td></tr>
+  </table></div>
+  <div class="callout"><b>Why it matters:</b> on an unseen 300-page ECR you can't eyeball every row. If a layout change makes the parser miss rows or shift a column, the sums stop matching and the report says so in red, instead of silently marking people "Missing". During development this check caught two real parser bugs.</div>
+</section>
+
+<section id="names">
+  <h2><span class="num">7</span>Name tolerance: the heart of the problem</h2>
+  <ol class="steps">
+    <li><b>Normalise:</b> uppercase, drop punctuation, honorifics (SMT, MR, SHRI…), relation suffixes (S/O…), expand abbreviations (MOHD→MOHAMMAD, KR→KUMAR).</li>
+    <li><b>Match tokens:</b> exact · same <b>phonetic key</b> (POOJA≈PUJA, KAVITHA≈KAVITA) · one <b>inserted/deleted</b> letter on 5+ letter words · initial.</li>
+    <li><b>Align</b> the shorter name's tokens one-to-one to the longer's (best total score). Any unmatched token → mismatch.</li>
+    <li><b>Given-name guard:</b> if initials or extra name parts are involved, at least one matched word must be <i>distinctive</i> (not KUMAR, DEVI, SHARMA, PRASAD…).</li>
+  </ol>
+  <div class="table-wrap"><table>
+    <tr><th>Pair</th><th>Result</th><th>Why</th></tr>
+    <tr><td>KUMAR ANIL / ANIL KUMAR</td><td><span class="st ok">VARIANT</span></td><td>word order</td></tr>
+    <tr><td>POOJA GUPTA / PUJA GUPTA</td><td><span class="st ok">VARIANT</span></td><td>phonetic</td></tr>
+    <tr><td>RAJESH SHARMA / RAJESH KUMAR SHARMA</td><td><span class="st ok">PARTIAL</span></td><td>extra middle name; RAJESH is distinctive</td></tr>
+    <tr><td>DINESH PRASAD / DEVENDRA PRASAD</td><td><span class="st">MISMATCH</span></td><td>only the common surname matches</td></tr>
+    <tr><td>REKHA SHARMA / RENU SHARMA</td><td><span class="st">MISMATCH</span></td><td>REKHA≠RENU (not phonetic, not one indel)</td></tr>
+    <tr><td>RAJESH KUMAR / RAKESH KUMAR</td><td><span class="st">MISMATCH</span></td><td>a <b>substitution</b> is a different name, not a typo</td></tr>
+    <tr><td>R. KUMAR SHARMA / RAJESH KUMAR SHARMA</td><td><span class="st">MISMATCH</span></td><td>only an initial + common names (configurable)</td></tr>
+  </table></div>
+  <div class="callout dark">Why not one fuzzy score? <code>token_sort_ratio("REKHA SHARMA", "RENU SHARMA") ≈ 0.8</code>, which is above most thresholds, yet it's a different person. A shared surname inflates the score. Rules can say <i>which</i> part differs, and they're testable pair by pair.</div>
+</section>
+
+<section id="amounts">
+  <h2><span class="num">8</span>Amounts</h2>
+  <ul>
+    <li>Compare wagesheet PF @12% ↔ <b>EE share</b>; ESIC @0.75% ↔ <b>IP contribution</b>.</li>
+    <li>Equal when <b>|ECR − wagesheet| ≤ ₹1</b>, because EPFO rounds to the nearest rupee and ESIC rounds up (11,440 × 0.75% = 85.80 → ₹86).</li>
+    <li>Difference = ECR − wagesheet (negative = short).</li>
+    <li><b>Evidence:</b> statutory rate × ECR wages tells you <i>which side is wrong</i>. VIKRAM: 12% × 13,780 = 1,654 = wagesheet, so the deposit of 1,354 is short.</li>
+  </ul>
+</section>
+
+<section id="verdicts">
+  <h2><span class="num">9</span>Verdict gates (first match wins)</h2>
+  <ol class="steps">
+    <li>ID blank or malformed in the wagesheet → <span class="st">MISSING</span> (or <span class="st">NOT_APPLICABLE</span> if nothing was deducted)</li>
+    <li>ID not in the ECR → <span class="st">MISSING</span> with the amount at risk (or NOT_APPLICABLE)</li>
+    <li>Name is a different person → <span class="st">NAME_MISMATCH</span> (the amount gap is still reported)</li>
+    <li>Amount differs by more than ₹1 → <span class="st">AMOUNT_MISMATCH</span> with both values, the difference and the expectation</li>
+    <li>Otherwise <span class="st ok">MATCHED</span> (notes any variant or rounding)</li>
+  </ol>
+</section>
+
+<section id="examples">
+  <h2><span class="num">10</span>Worked examples (the real sample)</h2>
+  <div class="trace"><div class="trace-head"><b>DINESH PRASAD: PF</b><span>NAME_MISMATCH</span></div><div class="trace-body"><ol>
+    <li>UAN 999912340007 found in the PF ECR (row 7).</li>
+    <li>ECR name and UAN-repository name are both "DEVENDRA PRASAD". DINESH≠DEVENDRA; PRASAD matches but is a common surname → mismatch.</li>
+    <li>The amount (1,529 = 1,529) is shown but doesn't rescue the name. In ESIC the same person is "DINESH PRASAD" → MATCHED. Verdicts are independent per authority.</li>
+  </ol></div></div>
+  <div class="trace"><div class="trace-head"><b>REKHA SHARMA: ESIC</b><span>NAME_MISMATCH</span></div><div class="trace-body"><ol>
+    <li>IP 9912340008 found; ECR name "RENU SHARMA".</li>
+    <li>REKHA vs RENU: different phonetic keys (REKA / RENU), not a one-letter insert/delete → no token match → MISMATCH. PF has REKHA SHARMA → MATCHED.</li>
+  </ol></div></div>
+  <div class="trace"><div class="trace-head"><b>VIKRAM THAKUR: PF</b><span>AMOUNT_MISMATCH −₹300</span></div><div class="trace-body"><ol>
+    <li>UAN found, name exact. Deducted ₹1,654; EE deposited ₹1,354; difference −₹300.</li>
+    <li>12% of ECR EPF wages (13,780) = ₹1,654, which matches the wagesheet, so the shortfall is in the deposit.</li>
+  </ol></div></div>
+  <div class="trace"><div class="trace-head"><b>NEHA MISHRA: ESIC</b><span>AMOUNT_MISMATCH −₹20</span></div><div class="trace-body"><ol>
+    <li>Deducted ₹86; IP contribution ₹66. 0.75% × 11,440 = 85.80 → rounded up ₹86, which matches the wagesheet.</li>
+  </ol></div></div>
+  <div class="trace"><div class="trace-head"><b>SANJAY PASWAN · POOJA GUPTA</b><span>MISSING</span></div><div class="trace-body"><ol>
+    <li>SANJAY: UAN and IP absent from both ECRs → ₹1,310 PF and ₹82 ESIC deducted but not deposited.</li>
+    <li>POOJA: present in PF (matched), absent from ESIC → ₹92 at risk.</li>
+  </ol></div></div>
+  <p><b>Totals:</b> PF 9 · 1 · 1 · 1 (short ₹1,610); ESIC 8 · 1 · 1 · 2 (short ₹194). All six reconciliation checks pass.</p>
+</section>
+
+<section id="testing">
+  <h2><span class="num">11</span>How it was tested</h2>
+  <div class="grid">
+    <div class="card"><h4>54 unit tests</h4><p>39 labelled name pairs (variants and traps), every verdict gate, amounts, ID formats, and the sample end to end (24/24).</p></div>
+    <div class="card"><h4>Synthetic scale sets</h4><p>A generator builds multi-page ECRs plus an answer key with injected variants, look-alike names, shortfalls, missing/extra/blank IDs and wrapped names.</p></div>
+    <div class="card"><h4>Results</h4><p>1,500 employees (34/38 pages): 3,000/3,000. 8,000 employees (175/197 pages): 16,000/16,000 in about 3 s. 0 missed mismatches, 0 false alarms.</p></div>
+  </div>
+  <h3>Bugs the tests caught (and what they teach)</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Bug</th><th>Caught by</th><th>Lesson</th></tr>
+    <tr><td>Alignment search kept no result when a word was unmatched → different names "matched"</td><td>trap pairs in the name suite</td><td>Test the cases you most fear, not just the happy path</td></tr>
+    <tr><td>The wagesheet mentions "ESIC" + "IP Number" → detected as the ESIC ECR</td><td>first sample run</td><td>Detection must use markers only the authority's document has</td></tr>
+    <tr><td>Right-aligned 3-digit numbers fell into the next column</td><td>reconciliation (Σ EE ≠ printed)</td><td>Self-checks catch layout bugs you didn't think of</td></tr>
+    <tr><td>Header fragments printed <i>below</i> the anchor line were ignored</td><td>reconciliation (Σ EPS ≠ printed)</td><td>Don't assume one PDF generator's conventions</td></tr>
+    <tr><td>Names wrapping in both PF name columns were cut → false alarms</td><td>answer key</td><td>Long real names wrap; test them</td></tr>
+  </table></div>
+</section>
+
+<section id="limits">
+  <h2><span class="num">12</span>Trade-offs &amp; known limits</h2>
+  <ul>
+    <li>Scanned PDFs are refused (no OCR yet). Reconciliation would be the guard if OCR were added.</li>
+    <li>Header synonyms cover the seen layouts. A renamed column needs one regex added; reconciliation reveals gaps.</li>
+    <li>Nicknames and rare transliterations become NAME_MISMATCH, which is safe but needs a human.</li>
+    <li>The rules are tuned for Indian names (common-surname list, phonetic map).</li>
+    <li>Only the employee share is verified (as the brief asks). Employer share, wage ceilings and NCP checks are extensions.</li>
+    <li>The synthetic tests use variations I designed. They prove scale, not real-world coverage.</li>
+  </ul>
+</section>
+
+<section id="practice">
+  <h2><span class="num">13</span>What to practise</h2>
+  <h3>Level 1: run and read</h3>
+  <ul class="check">
+    <li><code>npm test</code>; read <code>names.test.js</code> and predict three results before running.</li>
+    <li>Run the sample in the UI; open the .xlsx and explain every non-matched row from its reason column.</li>
+    <li><code>npm run generate -- --n 300</code> then <code>npm run eval</code>; open <code>outputs/eval.md</code>.</li>
+  </ul>
+  <h3>Level 2: change behaviour safely</h3>
+  <ul class="check">
+    <li>Make <code>R. KUMAR SHARMA</code> acceptable (<code>ALLOW_INITIAL_ONLY</code>) and see which tests change.</li>
+    <li>Add the abbreviation <code>SHK → SHEIKH</code> with a test pair.</li>
+    <li>Add an <b>employer-share</b> check for PF (ER is already parsed) as a note or new verdict, plus workbook columns.</li>
+    <li>Rename a header in the generator (e.g. "EE" → "Employee Share") and confirm the parser still works or needs a synonym.</li>
+  </ul>
+  <h3>Level 3: think like a reviewer</h3>
+  <ul class="check">
+    <li>Break the parser on purpose (shift a column in the generator) and watch reconciliation catch it.</li>
+    <li>Design an OCR fallback for scanned ECRs. Where would errors enter, and how would reconciliation limit the damage?</li>
+    <li>Sketch a reviewer workflow that learns approved name pairs per vendor without weakening the rules.</li>
+  </ul>
+</section>
+
+<section id="questions">
+  <h2><span class="num">14</span>Review questions (with answers)</h2>
+  <details><summary><span class="lvl b">B</span>What does the system verify, in one sentence?</summary><div class="ans"><p>For each wagesheet employee, separately for PF and ESIC, that the identifier exists in the authority's ECR, the name belongs to the same person, and the deposited employee share equals the deducted amount (±₹1), with a reason for every verdict.</p></div></details>
+  <details><summary><span class="lvl b">B</span>Why is the ID the key and not the name?</summary><div class="ans"><p>UAN and IP Number are unique statutory identifiers. Names repeat and vary. So the ID decides who the ECR row is, and the name only confirms it. Matching by name first would pair the wrong people.</p></div></details>
+  <details><summary><span class="lvl b">B</span>What's the difference between MISSING and NOT_APPLICABLE?</summary><div class="ans"><p>Both mean the ID isn't in the ECR. MISSING means money was deducted, so there's a deposit at risk. NOT_APPLICABLE means nothing was deducted (e.g. above the ESIC wage ceiling), so there's nothing to deposit.</p></div></details>
+  <details><summary><span class="lvl i">I</span>Why can't a simple line-by-line regex parse the PF ECR?</summary><div class="ans"><p>The two name columns sit side by side, so the text reads <code>ANIL KUMAR ANIL KUMAR</code> and there's no way to know where one name ends. Positions solve it: each word belongs to the column whose header it sits under.</p></div></details>
+  <details><summary><span class="lvl i">I</span>How does the system cope with a 300-page ECR it has never seen?</summary><div class="ans"><p>It finds headers by keywords on every page, reuses columns on continuation pages, accepts only ID-shaped rows, and re-joins wrapped names. Then it reconciles parsed rows and sums against the ECR's printed totals. Tested on 175- and 197-page synthetic ECRs (16,000/16,000 correct in about 3 s).</p></div></details>
+  <details><summary><span class="lvl i">I</span>Why is RAJESH vs RAKESH a mismatch when POOJA vs PUJA is a match?</summary><div class="ans"><p>POOJA/PUJA share a phonetic key (OO→U), a known transliteration variant. RAJESH/RAKESH differ by a substitution, J→K, which makes a different common name. Typo tolerance is limited to an inserted or deleted letter on longer words, so substitutions only pass through the phonetic rules.</p></div></details>
+  <details><summary><span class="lvl i">I</span>What is the given-name guard?</summary><div class="ans"><p>When a match relies on initials or ignores extra name parts, at least one matched word must be distinctive, not a very common surname like KUMAR, SHARMA or PRASAD. It stops "DINESH PRASAD" matching "DEVENDRA PRASAD" through the shared surname.</p></div></details>
+  <details><summary><span class="lvl i">I</span>Why compare against both PF names?</summary><div class="ans"><p>"Name as per UAN Repository" is the KYC-verified name; "Name as per ECR" is what the employer typed that month. Either legitimately identifies the member, so the best match wins and the report says which matched.</p></div></details>
+  <details><summary><span class="lvl a">A</span>Why ±₹1 and not exact equality?</summary><div class="ans"><p>Statutory rounding: EPFO rounds to the nearest rupee and ESIC rounds up. A wagesheet computed with decimals can differ by under a rupee without any wrongdoing. ±₹1 removes that noise but still catches any real shortfall. It's configurable.</p></div></details>
+  <details><summary><span class="lvl a">A</span>Reconciliation fails on a real file. What do you do?</summary><div class="ans"><p>The report still opens, with a red banner. Compare printed vs parsed: a row-count gap points to unrecognised rows (new ID format, odd wrapping); a sum gap with the right count points to a column-mapping error. Fix the header synonym or the ID pattern, add the layout to the tests, and re-run.</p></div></details>
+  <details><summary><span class="lvl a">A</span>Where would you use AI in this system, and where not?</summary><div class="ans"><p>Not in the verdicts: they must be reproducible and auditable. Good uses: an advisory note on borderline names (implemented, off by default); suggesting column mappings for an unknown wagesheet layout with human confirmation; OCR for scans; summarising a vendor's monthly exceptions for a manager.</p></div></details>
+  <details><summary><span class="lvl a">A</span>How would you scale this to all vendors, every month?</summary><div class="ans"><p>Batch runs per vendor and month, results in MongoDB, vendor dashboards (repeat shortfalls, chronic missing IDs), a reviewer queue for name mismatches with remembered approvals, and alerts when a vendor's shortfall exceeds a threshold. The verification core stays the same pure function.</p></div></details>
+</section>
+
+<section id="glossary">
+  <h2><span class="num">15</span>Glossary</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Term</th><th>Meaning</th></tr>
+    <tr><td>PF / EPF</td><td>Employees' Provident Fund. The employee contributes 12% of EPF wages</td></tr>
+    <tr><td>EPFO</td><td>Employees' Provident Fund Organisation, the PF authority</td></tr>
+    <tr><td>UAN</td><td>Universal Account Number, the 12-digit PF member ID</td></tr>
+    <tr><td>ECR</td><td>Electronic Challan cum Return: the monthly filing listing each member's wages and contributions</td></tr>
+    <tr><td>EE / ER / EPS</td><td>Employee share / employer's EPF share / Employee Pension Scheme part of the employer share</td></tr>
+    <tr><td>NCP days</td><td>Non-contributory period: days without wages</td></tr>
+    <tr><td>ESIC</td><td>Employees' State Insurance Corporation. The employee contributes 0.75% of wages</td></tr>
+    <tr><td>IP Number</td><td>Insured Person number, the ESIC member ID</td></tr>
+    <tr><td>Reconciliation</td><td>Checking parsed rows against the totals printed on the same document</td></tr>
+    <tr><td>Phonetic key</td><td>A simplified spelling so names that sound alike compare equal (POOJA→PUJA)</td></tr>
+  </table></div>
+</section>
+
+<section id="cheat">
+  <h2><span class="num">16</span>Cheat sheet</h2>
+<pre><code>npm install &amp;&amp; npm test                      <span class="c"># 54 tests</span>
+npm run build &amp;&amp; npm start                    <span class="c"># http://localhost:4100</span>
+npm run verify -- --wagesheet W --pf P --esic E -o outputs/report.xlsx
+npm run generate -- --n 8000 --out test-data/synthetic_large
+npm run eval                                   <span class="c"># outputs/eval.md</span>
+
+server/src/ingest/table.js     <span class="c"># header-driven columns (layout robustness)</span>
+server/src/ingest/ecr.js       <span class="c"># PF / ESIC header synonyms + totals</span>
+server/src/verify/names.js     <span class="c"># name tolerance (abbreviations, common names, phonetic)</span>
+server/src/verify/verdict.js   <span class="c"># gates + reasons</span>
+server/src/config.js / .env    <span class="c"># tolerance, partial / initial switches, ID shapes</span></code></pre>
+  <p>More: <code>README.md</code> (overview, results, tolerance tables) · <code>DETAILS.md</code> (full design) · <code>HOW_TO_RUN.md</code> (any device).</p>
+</section>
+
+</main>
+</div>
+<footer>Case Study 2 · ECR Verifier · Explainer &amp; study guide</footer>
+</body>
+</html>
